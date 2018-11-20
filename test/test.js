@@ -3,8 +3,10 @@ const request = require('supertest');
 const app = require('../app');
 const passportStub = require('passport-stub');
 var User = require('../models/user');
+var Book = require('../models/book');
 const Comment = require('../models/comment');
 const assert = require('assert');
+const deleteBook = require('../routes/books').deleteBook;
 
 describe('/login', () => {
     //itの前と後にやりたいこと、仮想ログインログアウト
@@ -113,6 +115,7 @@ describe('/books/:postId/users/:userId/comments', () => {
                             }).then((comments) => {
                                 assert.equal(comments.length, 1);
                                 assert.equal(comments[0].comment, 'testcomment');
+                                deleteBook(postId, done, err);
                             });
                         });
             });
@@ -120,12 +123,39 @@ describe('/books/:postId/users/:userId/comments', () => {
     });
 });
 
-function deleteBookComment(postId, done, err) {
-    const promiseCommentDestroy = Comment.findAll({
-        where: { postId: postId }
-    }).then((comments) => { 
-        comments.map((c) => { return c.destroy(); });
-        if (err) return done(err);
-        done();
+describe('/books/:postId?edit=1', () => {
+    before(() => {
+        passportStub.install(app);
+        passportStub.login({ id: 0, username: 'testuser' });
     });
-}
+
+    after(() => {
+        passportStub.logout();
+        passportStub.uninstall(app);
+    });
+
+    it('ほんの更新ができる', (done) => {
+        User.upsert({ userId: 0, username: 'testuser' }).then(() => {
+            request(app)
+                .post('/books')
+                .send({ bookName: 'テストコメント更新予定1', tag: 'タグ', isbn: 'testisbn', memo: 'テストコメント更新めも1' })
+                .end((err, res) => {
+                    const createdBookPath = res.headers.location;
+                    const postId = createdBookPath.split('/books/')[1];
+                    //更新されることをテスト
+                    request(app)
+                        .post(`/books/${postId}?edit=1`)
+                        .send({ bookName: 'テストコメント更新予定2', tag: 'タグ2', isbn: 'testisbn2', memo: 'テストコメント更新めも2'})
+                        .end((err, res) => {
+                            Book.findById(postId).then((s) => {
+                                assert.equal(s.bookName, 'テストコメント更新予定2');
+                                assert.equal(s.memo, 'テストコメント更新めも2');
+                                deleteBook(postId, done, err);
+                            });
+                        });
+                    });
+                });
+
+    });
+});
+

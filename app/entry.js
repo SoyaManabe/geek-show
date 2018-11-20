@@ -1,5 +1,8 @@
 'use strict';
 import $ from 'jquery';
+const global = Function('return this;')();
+global.jQuery = $;
+import bootstrap from 'bootstrap';
 
 const buttonSelfComment = $('#self-comment-button');
 buttonSelfComment.click(() => {

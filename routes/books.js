@@ -84,4 +84,76 @@ router.get('/:postId', authenticationEnsurer, (req, res, next) => {
         }
     });
 });
+
+router.get('/:postId/edit', authenticationEnsurer, (req, res, next) => {
+    Book.findOne({
+        where: {
+            postId: req.params.postId
+        }
+    }).then((book) => {
+        if (isMine(req, book)) { //only person who shelfed
+            res.render('edit', {
+                user: req.user,
+                book: book,
+            });
+        } else {
+            const err = new Error('No sucha book or no permission');
+            err.status = 404;
+            next(err);
+        }
+    });
+});
+
+function isMine(req, book) {
+    return book && parseInt(book.createdBy) === parseInt(req.user.id);
+}
+
+router.post('/:postId', authenticationEnsurer, (req, res, next) => {
+    Book.findOne({
+        where: {
+            postId: req.params.postId
+        }
+    }).then((book) => {
+        if (book && isMine(req, book)) {
+            if (parseInt(req.query.edit) === 1) {
+                const updatedAt = new Date();
+                book.update({
+                    postId: book.postId,
+                    bookName: req.body.bookName.slice(0, 255),
+                    tag: req.body.tag,
+                    isbn: req.body.isbn,
+                    memo: req.body.memo,
+                    createdBy: req.user.id,
+                    updatedAt: updatedAt
+                }).then((book) => {
+                    res.redirect('/books/' + book.postId);
+                });
+            } else if (parseInt(req.query.delete) ==1) {
+                deleteBook(req.params.postId, () => {
+                    res.redirect('/');
+                });
+            } else {
+                const err = new Error('Bad Request');
+                err.status = 400;
+                next(err);
+            }
+        } else {
+            const err = new Error('Not found or Not aothorized');
+            err.status = 404;
+            next(err);
+        }
+    });
+});
+
+function deleteBook(postId, done, err) {
+    return Book.findById(postId).then((b) => {
+        return b.destroy(); 
+    }).then(() => {
+        if (err) return done(err);
+        done();
+    });
+}
+
+router.deleteBook = deleteBook;
+
 module.exports = router;

@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    h3 Edit Book
+    form(method="post", action=`/books/${book.postId}?edit=1`)
+        div
+            h5 Title of the book
+            input(type="text" name="bookName" value=book.bookName)
+        div
+            h5 tag
+            input(type="text" name="tag" value=book.tag)
+        div
+            h5 ISBN
+            input(type="text" name="isbn" value=book.isbn)
+        div
+            h5 Memo
+            textarea(name="memo") #{book.memo}
+        div
+            button(type="submit") Save
+    h3 Danger Zone
+    form(method="post", action=`/books/${book.postId}?delete=1`)
+        button(type="submit") Delete This Book
