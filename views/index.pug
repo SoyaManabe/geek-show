@@ -3,3 +3,21 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  div
+    if user
+      div
+        a(href="/logout") #{user.username} をログアウト
+      div
+        a(href="/books/new") Shelf a book
+        - var hasBook = books.length > 0
+        if hasBook
+          h3 Our Shelf
+          each book in books
+            a(href=`/books/${book.postId}`) #{book.bookName}
+            br
+            a(href=`/users/${book.createdBy}`) #{book.createdBy}
+            p #{book.updatedAt}
+            hr
+    else
+      div
+        a(href="/login") ログイン

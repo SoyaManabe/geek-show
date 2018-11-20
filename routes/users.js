@@ -1,9 +1,29 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
+const express = require('express');
+const router = express.Router();
+//認証を確かめるハンドラ関数がある前提で実装
+const authenticationEnsurer = require('./authentication-ensurer');
+const Book = require('../models/book');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/:userId', authenticationEnsurer, (req, res, next) => {
+    Book.findAll({
+        where: {
+            createdBy: req.params.userId
+        },
+        order: [['"updatedAt"', 'DESC']]
+    }).then((books) => {
+        if (books) {
+            res.render('user', {
+                books: books,
+                user: req.user,
+                geekname: req.params.userId
+        });
+        } else {
+            const err = new Error('まだほんの投稿がされていないユーザーです');
+            err.status = 404;
+            next(err);
+        }
+    });
 });
 
 module.exports = router;

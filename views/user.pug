@@ -1,0 +1,28 @@
+extends layout
+
+block content
+    h4 #{user.username}
+    h4 Profile
+    p #{user.userId}
+    - var isEditable = (user.id === geekname)
+    div
+        if isEditable
+            - console.log(user.id)
+            - console.log(geek)
+            p #{isEditable}
+            a(href="/プロフィール編集のためのリンク") Edit Profile
+    h3 Shelf
+    - var hasBook = books.length > 0
+    if hasBook
+        each book in books
+            a(href=`/books/${book.postId}`) #{book.bookName}
+            - const ISBN = book.isbn
+            img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;")
+            p #{book.updatedAt}
+            if isEditable
+                form(method="post" action="/books/:postId?edit=1")
+                input(type="hidden" name="id" value=book.postId)
+                button(type="submit") 編集
+            hr
+    else 
+        h3 No books yet

@@ -1,0 +1,21 @@
+extends layout
+
+block content
+    h4 #{book.bookName}
+    - const ISBN = book.isbn
+    img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;")
+    p #{book.tag}
+    p(style="white-space:pre;") #{book.memo}
+    p GeekName: #{book.user.username}
+    button Edit
+    h4 Comment
+    
+    each user in users
+        if user.isSelf
+            p#self-comment #{commentMap.get(user.userId)}
+            button(
+                data-book-id=book.postId
+                data-user-id=user.userId)#self-comment-button Edit
+        else
+            p #{commentMap.get(user.userId)}
+    

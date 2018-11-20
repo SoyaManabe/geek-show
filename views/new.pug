@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    form(method="post", action="/books")
+        div
+            h5 Title of the book
+            input(type="text" name="bookName")
+        div
+            h5 tag
+            input(type="text" name="tag")
+        div
+            h5 ISBN
+            input(type="text" name="isbn")
+        div
+            h5 Memo
+            textarea(name="memo")
+        button(type="submit") Shelf!!
