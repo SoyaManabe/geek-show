@@ -1,0 +1,7 @@
+{
+    "name": "geek-show",
+    "description": "Geek Show",
+    "logo": "",
+    "keywords": ["node"],
+    "image": "heroku/nodejs"
+}

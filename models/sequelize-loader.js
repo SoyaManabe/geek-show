@@ -4,7 +4,7 @@
  */
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(
-    'postgres://postgres:postgres@localhost/geek_show',
+    process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost/geek_show',
     {
         logging: true,
         operatorsAliases: false
