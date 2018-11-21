@@ -8,12 +8,15 @@ const uuid = require('uuid');
 const Book = require('../models/book');
 const User = require('../models/user');
 const Comment = require('../models/comment');
+const moment = require('moment-timezone');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 
-router.get('/new', authenticationEnsurer, (req, res, next) => {
-    res.render('new', { user: req.user });
+router.get('/new', authenticationEnsurer, csrfProtection, (req, res, next) => {
+    res.render('new', { user: req.user, csrfToken: req.csrfToken() });
 });
 
-router.post('/', authenticationEnsurer, (req, res, next) => {
+router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
     //console.log(req.body); //ほんの情報を保存する実装をする
     //res.redirect('/');
     const postId = uuid.v4();
@@ -45,6 +48,7 @@ router.get('/:postId', authenticationEnsurer, (req, res, next) => {
         order: [['"updatedAt"', 'DESC']]
     }).then((book) => {
         if (book) {
+            book.formattedUpdatedAt = moment(book.updatedAt).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
             //コメント取得
             Comment.findAll({
                 where: { postId: book.postId }
@@ -85,7 +89,7 @@ router.get('/:postId', authenticationEnsurer, (req, res, next) => {
     });
 });
 
-router.get('/:postId/edit', authenticationEnsurer, (req, res, next) => {
+router.get('/:postId/edit', authenticationEnsurer, csrfProtection, (req, res, next) => {
     Book.findOne({
         where: {
             postId: req.params.postId
@@ -95,6 +99,7 @@ router.get('/:postId/edit', authenticationEnsurer, (req, res, next) => {
             res.render('edit', {
                 user: req.user,
                 book: book,
+                csrfToken: req.csrfToken()
             });
         } else {
             const err = new Error('No sucha book or no permission');
@@ -108,7 +113,7 @@ function isMine(req, book) {
     return book && parseInt(book.createdBy) === parseInt(req.user.id);
 }
 
-router.post('/:postId', authenticationEnsurer, (req, res, next) => {
+router.post('/:postId', authenticationEnsurer, csrfProtection, (req, res, next) => {
     Book.findOne({
         where: {
             postId: req.params.postId

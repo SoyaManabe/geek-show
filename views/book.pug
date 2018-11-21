@@ -1,20 +1,25 @@
 extends layout
 
 block content
-    h4 #{book.bookName}
-    - const ISBN = book.isbn
-    img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;")
-    p #{book.tag}
-    p(style="white-space:pre;") #{book.memo}
-    a(href=`/users/${book.createdBy}`) GeekName: #{book.user.username}
+    div.card.my-3
+        div.card-header
+            h4 #{book.bookName}
+        - const ISBN = book.isbn
+        div.card-body
+            img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;").card-img-top.my-3
+            p.card-subtitle.text-muted Tag: #{book.tag}
+            p.card-text #{book.memo}
+        div.card-footer
+            a(href=`/users/${book.createdBy}`).text-dark GeekName: #{book.user.username}
+            p #{book.formattedUpdatedAt}       
     - var isEditable = ( user.id - book.createdBy === 0 )
-    div
+    div.my-3
         if isEditable
             div
-                a(href=`/books/${book.postId}/edit`) Edit This Book
+                a(href=`/books/${book.postId}/edit`).btn.btn-info Edit This Book
     
-    div
-        a(href=`/users/${book.createdBy}`) Back to Shelf
-    div
-        a(href='/') Back to the top
+    div.my-3
+        a(href=`/users/${book.createdBy}`).btn.btn-info Back to Shelf
+    div.my-3
+        a(href='/').btn.btn-info Back to the top
     

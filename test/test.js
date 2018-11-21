@@ -25,7 +25,7 @@ describe('/login', () => {
         request(app)
             .get('/login')
             .expect('Content-Type', 'text/html; charset=utf-8') //ヘッダに存在する？
-            .expect(/<a href="\/auth\/github"/) //bodyに入っている？
+            .expect(/<a class="btn btn-info my-3" href="\/auth\/github"/) //bodyに入っている？
             .expect(200, done);
     });
 

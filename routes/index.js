@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/book');
+const moment = require('moment-timezone');
 
 /* GET home page. */
 /**
@@ -17,6 +18,9 @@ router.get('/', function(req, res, next) {
       },*/
       order: [['"updatedAt"', 'DESC']]
     }).then((books) => {
+      books.forEach((book) => {
+        book.formattedUpdatedAt = moment(book.updatedAt).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
+      });
       res.render('index', {
         title: title,
         user: req.user,
