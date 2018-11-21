@@ -1,24 +1,24 @@
 extends layout
 
 block content
-  img(src="../HatchfulExport-All/logo.png")
-  div.jumbotron.my-3
-    
-    h1.display-4 Geek Show
-    p.lead Shear your shelf and review!
+  img(src="images/HatchfulExport-All/twitter_header_photo_2.png" style="width:100%;")
+  p.lead.text-center Track what you read. Share your Shelf! 
   if user
     div
-      a(href="/books/new") Shelf a book
+      a(href="/books/new").btn.btn-primary Post a book
     - var hasBook = books.length > 0
     if hasBook
         h3.my-3 Our Shelf
-        each book in books
-          a(href=`/books/${book.postId}`) #{book.bookName}            
-          br
-          - const ISBN = book.isbn
-          img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;")
-          br
-          p UserID:
-            a(href=`/users/${book.createdBy}`) #{book.createdBy}
-          p #{book.formattedUpdatedAt}            
-          hr
+        div(style="display: flex;").row.row-eq-height
+          each book in books
+            div.col-sm-4
+              a(href=`/books/${book.postId}`) #{book.bookName}            
+              br
+              - const ISBN = book.isbn
+              a(href=`/books/${book.postId}`)
+                img.indeximg(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read")
+              br
+              p UserID:
+                a(href=`/users/${book.createdBy}`) #{book.createdBy}
+              p #{book.formattedUpdatedAt}            
+        hr

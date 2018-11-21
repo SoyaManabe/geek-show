@@ -4,5 +4,14 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: black;
+}
+
+.row-eq-height {
+  display: inline-block;
+  flex-wrap: wrap;
+}
+.indeximg{
+  width: 80%;
+  height:auto;
 }
