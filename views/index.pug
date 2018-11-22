@@ -9,16 +9,15 @@ block content
     - var hasBook = books.length > 0
     if hasBook
         h3.my-3 Our Shelf
-        div(style="display: flex;").row.row-eq-height
+        div(style="display: flex;").card-columns
           each book in books
-            div.col-sm-4
-              a(href=`/books/${book.postId}`) #{book.bookName}            
-              br
+            div.card
+              a(href=`/books/${book.postId}`).card-header #{book.bookName}
               - const ISBN = book.isbn
               a(href=`/books/${book.postId}`)
-                img.indeximg(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read")
+                img.card-img-top(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read")
               br
-              p UserID:
+              p.card-text UserID:
                 a(href=`/users/${book.createdBy}`) #{book.createdBy}
-              p #{book.formattedUpdatedAt}            
+              p.card-footer #{book.formattedUpdatedAt}            
         hr
