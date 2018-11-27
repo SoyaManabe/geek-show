@@ -4,11 +4,15 @@ block content
     h4 #{geek.username}
     h4 Profile
     p #{geek.profile}
+    h4 GitHub Page
+    - const UserName = geek.username
+    a(href="https://github.com/"+UserName) https://github.com/#{geek.username}
     - var isEditable = (user.id === geekid)
     div
         if isEditable
             div
-                a(href=`/users/${geekid}/edit`) Edit Profile
+                form(method="get" action=`/users/${geekid}/edit`)
+                    button(type="submit").btn.btn-info.btn-sm Edit Profile
     h3 Shelf
     - var hasBook = books.length > 0
     if hasBook
@@ -20,7 +24,7 @@ block content
             if isEditable
                 form(method="get" action=`/books/${book.postId}/edit`)
                     input(type="hidden" name="id" value=book.postId)
-                    button(type="submit") 編集
+                    button(type="submit").btn.btn-info Edit
             hr
     else 
         h3 No books yet
