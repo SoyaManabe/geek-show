@@ -1,0 +1,11 @@
+extends layout
+
+block content
+    h3.my-3 Edit Profile
+    p #{user.profile}
+    form(method="post", action=`/users/${user.userId}?edit=1`)
+        div.form-group
+            label(for="profile") Your Profile
+            textarea(name="profile" rows="4")#profile.form-control
+        div.form-group
+            button(type="submit").btn.btn-info Save

@@ -3,11 +3,12 @@ extends layout
 block content
     h4 #{geek.username}
     h4 Profile
-    p #{user.userId}
+    p #{geek.profile}
     - var isEditable = (user.id === geekid)
     div
         if isEditable
-            a(href="/プロフィール編集のためのリンク") Edit Profile
+            div
+                a(href=`/users/${geekid}/edit`) Edit Profile
     h3 Shelf
     - var hasBook = books.length > 0
     if hasBook
