@@ -1,30 +1,34 @@
 extends layout
 
 block content
-    h4 #{geek.username}
-    h4 Profile
-    p #{geek.profile}
-    h4 GitHub Page
+    h2 #{geek.username}
     - const UserName = geek.username
+    img(src="https://avatars.githubusercontent.com/"+UserName+"?s=230")
+    h3 Profile
+    p #{geek.profile}
+    h3 GitHub Page
     a(href="https://github.com/"+UserName) https://github.com/#{geek.username}
     - var isEditable = (user.id === geekid)
-    div
+    div.my-3
         if isEditable
             div
                 form(method="get" action=`/users/${geekid}/edit`)
                     button(type="submit").btn.btn-info.btn-sm Edit Profile
-    h3 Shelf
+    hr
+    h3.my-3 Shelf
     - var hasBook = books.length > 0
     if hasBook
         each book in books
-            a(href=`/books/${book.postId}`) #{book.bookName}
-            - const ISBN = book.isbn
-            img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;")
-            p #{book.updatedAt}
-            if isEditable
-                form(method="get" action=`/books/${book.postId}/edit`)
-                    input(type="hidden" name="id" value=book.postId)
-                    button(type="submit").btn.btn-info Edit
+            div.card
+                a(href=`/books/${book.postId}`).card-header #{book.bookName}
+                - const ISBN = book.isbn
+                img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;").card-img-top
+                div.card-footer
+                    p #{book.updatedAt}
+                    if isEditable
+                        form(method="get" action=`/books/${book.postId}/edit`)
+                            input(type="hidden" name="id" value=book.postId)
+                            button(type="submit").btn.btn-info Edit
             hr
     else 
         h3 No books yet
