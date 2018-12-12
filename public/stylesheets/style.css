@@ -12,9 +12,12 @@ a {
   width: 80%;
   height:auto;
 }
-
 .card-columns {
   @include media-breakpoint-only(lg) {
     column-count: 3;
   }
+}
+
+footer {
+  background-color: gainsboro;
 }
