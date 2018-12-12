@@ -12,26 +12,54 @@ const moment = require('moment-timezone');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
 
+
+//Here
+const Amazon = require('../amazonapi');
+const {OperationHelper} = require('apac')
+const opHelper = new OperationHelper({
+    awsId:      'AKIAIQA3Z6UDRTQASMBA',
+    awsSecret:  '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',
+    assocId:    'rikean-22',
+    locale:     'JP',
+})
+
 router.get('/new', authenticationEnsurer, csrfProtection, (req, res, next) => {
     res.render('new', { user: req.user, csrfToken: req.csrfToken() });
 });
 
 router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
-    //console.log(req.body); //ほんの情報を保存する実装をする
-    //res.redirect('/');
     const postId = uuid.v4();
     const updatedAt = new Date();
-    Book.create({
-        postId: postId,
-        bookName: req.body.bookName.slice(0, 255),
-        tag: req.body.tag,
-        isbn: req.body.isbn,
-        memo: req.body.memo,
-        createdBy: req.user.id,
-        updatedAt: updatedAt
-    }).then((book) => {
-        res.redirect('/books/' + book.postId);
-    });
+    opHelper.execute('ItemSearch', {
+        'SearchIndex': 'Books',
+        'Keywords': req.body.bookName,
+        'ResponseGroup': 'ItemAttributes,Images'
+    }).then((research) => {
+        if (research) {
+            console.log('Results object: \n', research.result.ItemSearchResponse.Items.Item[0])
+            const BookUrl = research.result.ItemSearchResponse.Items.Item[0].LargeImage.URL
+            console.log("入れたいURL"+BookUrl);
+            Book.create({
+                postId: postId,
+                bookName: req.body.bookName.slice(0, 255),
+                tag: req.body.tag,
+                isbn: BookUrl,
+                memo: req.body.memo,
+                createdBy: req.user.id,
+                updatedAt: updatedAt
+            }).then((book) => {
+                console.log("格納したと思っているURL"+book.isbn);
+                res.redirect('/books/' + book.postId);
+            });
+        }else {
+            const err = new Error('Not found the book');
+            err.status = 404;
+            next(err);
+        }
+    }).catch((err) => {
+        console.error('Something went wrong! ', err)
+        res.send('Something went wrong! ');
+    })
 });
 
 router.get('/:postId', authenticationEnsurer, (req, res, next) => {
@@ -122,17 +150,36 @@ router.post('/:postId', authenticationEnsurer, csrfProtection, (req, res, next) 
         if (book && isMine(req, book)) {
             if (parseInt(req.query.edit) === 1) {
                 const updatedAt = new Date();
-                book.update({
-                    postId: book.postId,
-                    bookName: req.body.bookName.slice(0, 255),
-                    tag: req.body.tag,
-                    isbn: req.body.isbn,
-                    memo: req.body.memo,
-                    createdBy: req.user.id,
-                    updatedAt: updatedAt
-                }).then((book) => {
-                    res.redirect('/books/' + book.postId);
-                });
+
+                opHelper.execute('ItemSearch', {
+                    'SearchIndex': 'Books',
+                    'Keywords': req.body.bookName,
+                    'ResponseGroup': 'ItemAttributes,Images'
+                }).then((research) => {
+                    if (research) {
+                        console.log('Results object: \n', research.result.ItemSearchResponse.Items.Item[0])
+                        const BookUrl = research.result.ItemSearchResponse.Items.Item[0].LargeImage.URL
+                        console.log("入れたいURL"+BookUrl);
+                        book.update({
+                            postId: book.postId,
+                            bookName: req.body.bookName.slice(0, 255),
+                            tag: req.body.tag,
+                            isbn: BookUrl,
+                            memo: req.body.memo,
+                            createdBy: req.user.id,
+                            updatedAt: updatedAt
+                        }).then((book) => {
+                            res.redirect('/books/' + book.postId);
+                        });
+                    }else {
+                        const err = new Error('Not found the book');
+                        err.status = 404;
+                        next(err);
+                    }
+                }).catch((err) => {
+                    console.error('Something went wrong! ', err)
+                    res.send('Something went wrong! ');
+                })
             } else if (parseInt(req.query.delete) ==1) {
                 deleteBook(req.params.postId, () => {
                     res.redirect('/');

@@ -6,7 +6,8 @@ block content
             h4 #{book.bookName}
         - const ISBN = book.isbn
         div.card-body
-            img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;").card-img-top.my-3
+            - console.log("book.pugで表示されるURL"+ISBN);
+            img(src=ISBN alt="books I read" style="width:20rem;").card-img-top.my-3
             p.card-subtitle.text-muted Tag: #{book.tag}
             p.card-text #{book.memo}
         div.card-footer

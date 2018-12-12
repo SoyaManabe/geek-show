@@ -15,7 +15,7 @@ block content
               a(href=`/books/${book.postId}`).card-header #{book.bookName}
               - const ISBN = book.isbn
               a(href=`/books/${book.postId}`)
-                img.card-img-top(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read")
+                img.card-img-top(src=ISBN alt="books I read")
               br
               p.card-text UserID:
                 a(href=`/users/${book.createdBy}`) #{book.createdBy}

@@ -11,9 +11,6 @@ block content
             label(for="tag") tag
             input(type="text" name="tag" value=book.tag)#tag.form-control
         div.form-group
-            label(for="isbn") ISBN
-            input(type="text" name="isbn" value=book.isbn)#isbn.form-control
-        div.form-group
             label(for="memo") Memo
             textarea(name="memo" rows="4")#memo.form-control #{book.memo}
         div.form-group

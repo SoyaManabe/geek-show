@@ -22,7 +22,7 @@ block content
             div.card
                 a(href=`/books/${book.postId}`).card-header #{book.bookName}
                 - const ISBN = book.isbn
-                img(src="http://images-jp.amazon.com/images/P/"+ISBN+".09.LZZZZZZZ.jpg" alt="books I read" style="width:20rem;").card-img-top
+                img(src=ISBN alt="books I read" style="width:20rem;").card-img-top
                 div.card-footer
                     p #{book.updatedAt}
                     if isEditable
