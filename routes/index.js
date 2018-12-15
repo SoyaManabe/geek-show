@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/book');
+const User = require('../models/user');
 const moment = require('moment-timezone');
 
 /* GET home page. */
@@ -21,11 +22,18 @@ router.get('/', function(req, res, next) {
       books.forEach((book) => {
         book.formattedUpdatedAt = moment(book.updatedAt).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
       });
-      res.render('index', {
-        title: title,
-        user: req.user,
-        books: books
+      User.findAll({
+        order: [['"username"', 'DESC']]
+      }).then((users) => {
+        console.log("number of users is "+users.length);
+        res.render('index', {
+          title: title,
+          user: req.user,
+          books: books,
+          users: users
+        });
       });
+      
     });
   } else {
     res.render('index', {title: title, user: req.user });

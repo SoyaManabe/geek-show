@@ -4,20 +4,29 @@ block content
   img(src="images/HatchfulExport-All/twitter_header_photo_2.png" style="width:100%;")
   p.lead.text-center Track what you read. Share your Shelf! 
   if user
+    h3.my-3 Menber
+    div(style="display: flex;").row
+      each geek in users
+        -console.log(geek.username);
+        - const UserName = geek.username
+        a(href=`/users/${geek.userId}`)
+          img.mx-1(src="https://avatars.githubusercontent.com/"+UserName+"?s=100")
+    hr
     div
       a(href="/books/new").btn.btn-primary Post a book
     - var hasBook = books.length > 0
     if hasBook
         h3.my-3 Our Shelf
-        div(style="display: flex;").card-columns
+        div(style="display: flex;").row
           each book in books
-            div.card
-              a(href=`/books/${book.postId}`).card-header #{book.bookName}
+            div.card.col-6.col-md-4.col-lg-3
               - const ISBN = book.isbn
               a(href=`/books/${book.postId}`)
                 img.card-img-top(src=ISBN alt="books I read")
+              a(href=`/books/${book.postId}`).card-title #{book.bookName}
               br
-              p.card-text UserID:
+              p.card-text User:
                 a(href=`/users/${book.createdBy}`) #{book.createdBy}
-              p.card-footer #{book.formattedUpdatedAt}            
-        hr
+              p.card-text
+                small.text-muted #{book.formattedUpdatedAt}            
+        
