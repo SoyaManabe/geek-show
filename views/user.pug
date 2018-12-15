@@ -18,17 +18,23 @@ block content
     h3.my-3 Shelf
     - var hasBook = books.length > 0
     if hasBook
-        each book in books
-            div.card
-                a(href=`/books/${book.postId}`).card-header #{book.bookName}
-                - const ISBN = book.isbn
-                img(src=ISBN alt="books I read" style="width:20rem;").card-img-top
-                div.card-footer
-                    p #{book.updatedAt}
-                    if isEditable
-                        form(method="get" action=`/books/${book.postId}/edit`)
-                            input(type="hidden" name="id" value=book.postId)
-                            button(type="submit").btn.btn-info Edit
+        div(style="display: flex;").row
+          each book in books
+            div.card.col-6.col-md-4.col-lg-3
+              - const ISBN = book.isbn
+              a(href=`/books/${book.postId}`)
+                img.card-img-top(src=ISBN alt="books I read")
+              div.card-footer
+                p Tag: #{book.tag}
+                //a(href=`/books/${book.postId}`).card-title #{book.bookName}
+                //br
+                //a(href=`/users/${book.createdBy}`) User: #{book.createdBy}
+                p.card-text
+                small.text-muted #{book.formattedUpdatedAt}  
+                if isEditable
+                  form(method="get" action=`/books/${book.postId}/edit`)
+                      input(type="hidden" name="id" value=book.postId)
+                      button(type="submit").btn.btn-info Edit
             hr
     else 
         h3 No books yet
